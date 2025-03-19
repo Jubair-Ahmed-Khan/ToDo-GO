@@ -47,6 +47,7 @@ func main() {
 		fmt.Println("\n" + colorize("To-Do List Application", ColorYellow))
 
 		fmt.Println("\n" + colorize("1. View Task", ColorBlue))
+		fmt.Println(colorize("2. Add Task", ColorBlue))
 
 		// user choice input
 		fmt.Print("\nChoose an option: ")
@@ -57,6 +58,11 @@ func main() {
 		switch option {
 		case "1":
 			viewTasks()
+		case "2":
+			fmt.Print("Enter task name: ")
+			taskName, _ := reader.ReadString('\n')
+			taskName = strings.TrimSpace(taskName)
+			addTask(taskName)
 		default:
 			fmt.Println("Invalid option. Please try again.")
 		}
@@ -117,5 +123,35 @@ func viewTasks() {
 		} else {
 			fmt.Println(colorize("[Incomplete]", ColorRed))
 		}
+	}
+}
+
+// function to add a task
+func addTask(name string) {
+	task := Task{
+		ID:   nextID,
+		Name: name,
+		Done: false,
+	}
+	tasks = append(tasks, task)
+	nextID++
+	saveTasks()
+	fmt.Println(colorize("Task added successfully!",ColorGreen))
+}
+
+// function to save task to file
+func saveTasks() {
+
+	file, err := json.MarshalIndent(tasks, "", "  ") // configure json , 2nd params -> prefix, 3rd params -> indentation
+
+	if err != nil {
+		fmt.Println(colorize("Error saving tasks:",ColorRed), err)
+		return
+	}
+
+	err = os.WriteFile(filename, file, 0644) // add task from slice to json
+
+	if err != nil {
+		fmt.Println(colorize("Error writing to file:",ColorRed), err)
 	}
 }
