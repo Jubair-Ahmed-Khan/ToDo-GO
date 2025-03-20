@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -22,12 +23,12 @@ const filename = "tasks.json"
 
 // ANSI escape codes for coloring text
 const (
-	ColorRed    = "\033[31m"
-	ColorGreen  = "\033[32m"
-	ColorYellow = "\033[33m"
-	ColorBlue   = "\033[34m"
+	ColorRed     = "\033[31m"
+	ColorGreen   = "\033[32m"
+	ColorYellow  = "\033[33m"
+	ColorBlue    = "\033[34m"
 	ColorMagenta = "\033[35m"
-	ColorReset  = "\033[0m"
+	ColorReset   = "\033[0m"
 )
 
 // function to colorize text
@@ -48,6 +49,7 @@ func main() {
 
 		fmt.Println("\n" + colorize("1. View Task", ColorBlue))
 		fmt.Println(colorize("2. Add Task", ColorBlue))
+		fmt.Println(colorize("3. Edit Task", ColorBlue))
 
 		// user choice input
 		fmt.Print("\nChoose an option: ")
@@ -63,6 +65,21 @@ func main() {
 			taskName, _ := reader.ReadString('\n')
 			taskName = strings.TrimSpace(taskName)
 			addTask(taskName)
+		case "3":
+			fmt.Print("Enter task ID to edit: ")
+			taskIDStr, _ := reader.ReadString('\n')
+			taskIDStr = strings.TrimSpace(taskIDStr)
+			taskID, err := strconv.Atoi(taskIDStr)
+
+			if err != nil {
+				fmt.Println(colorize("Invalid task ID.", ColorRed))
+				break
+			}
+
+			fmt.Print("Enter new task name: ")
+			newName, _ := reader.ReadString('\n')
+			newName = strings.TrimSpace(newName)
+			editTask(taskID, newName)
 		default:
 			fmt.Println("Invalid option. Please try again.")
 		}
@@ -136,7 +153,20 @@ func addTask(name string) {
 	tasks = append(tasks, task)
 	nextID++
 	saveTasks()
-	fmt.Println(colorize("Task added successfully!",ColorGreen))
+	fmt.Println(colorize("Task added successfully!", ColorGreen))
+}
+
+// function to edit a task
+func editTask(id int, newName string) {
+	for i, task := range tasks {
+		if task.ID == id {
+			tasks[i].Name = newName
+			saveTasks()
+			fmt.Println(colorize("Task updated successfully!", ColorGreen))
+			return
+		}
+	}
+	fmt.Println(colorize("Task not found", ColorRed))
 }
 
 // function to save task to file
@@ -145,13 +175,13 @@ func saveTasks() {
 	file, err := json.MarshalIndent(tasks, "", "  ") // configure json , 2nd params -> prefix, 3rd params -> indentation
 
 	if err != nil {
-		fmt.Println(colorize("Error saving tasks:",ColorRed), err)
+		fmt.Println(colorize("Error saving tasks:", ColorRed), err)
 		return
 	}
 
 	err = os.WriteFile(filename, file, 0644) // add task from slice to json
 
 	if err != nil {
-		fmt.Println(colorize("Error writing to file:",ColorRed), err)
+		fmt.Println(colorize("Error writing to file:", ColorRed), err)
 	}
 }
