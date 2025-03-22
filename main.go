@@ -45,11 +45,12 @@ func main() {
 
 	for {
 
-		fmt.Println("\n" + colorize("To-Do List Application", ColorYellow))
+		fmt.Println("\n" + colorize("#### To-Do List Application ####", ColorYellow))
 
 		fmt.Println("\n" + colorize("1. View Task", ColorBlue))
 		fmt.Println(colorize("2. Add Task", ColorBlue))
 		fmt.Println(colorize("3. Edit Task", ColorBlue))
+		fmt.Println(colorize("4. Toggle Task Completion", ColorBlue))
 
 		// user choice input
 		fmt.Print("\nChoose an option: ")
@@ -80,8 +81,23 @@ func main() {
 			newName, _ := reader.ReadString('\n')
 			newName = strings.TrimSpace(newName)
 			editTask(taskID, newName)
+
+		case "4":
+			fmt.Print("Enter task ID to toggle completion: ")
+
+			taskIDStr, _ := reader.ReadString('\n')
+			taskIDStr = strings.TrimSpace(taskIDStr)
+			taskID, err := strconv.Atoi(taskIDStr)
+
+			if err != nil {
+				fmt.Println(colorize("Invalid task ID.", ColorRed))
+				break
+			}
+
+			toggleTaskCompletion(taskID)
+			
 		default:
-			fmt.Println("Invalid option. Please try again.")
+			fmt.Println(colorize("\nInvalid option. Please try again.", ColorRed))
 		}
 	}
 }
@@ -93,7 +109,7 @@ func loadTasks() {
 
 	if err != nil {
 		if os.IsNotExist(err) {
-			fmt.Println("No existing tasks found. Starting fresh.")
+			fmt.Println("\nNo existing tasks found. Starting fresh.")
 			return
 		}
 		fmt.Println("Error loading tasks:", err)
@@ -153,7 +169,7 @@ func addTask(name string) {
 	tasks = append(tasks, task)
 	nextID++
 	saveTasks()
-	fmt.Println(colorize("Task added successfully!", ColorGreen))
+	fmt.Println(colorize("\nTask added successfully!", ColorGreen))
 }
 
 // function to edit a task
@@ -162,11 +178,27 @@ func editTask(id int, newName string) {
 		if task.ID == id {
 			tasks[i].Name = newName
 			saveTasks()
-			fmt.Println(colorize("Task updated successfully!", ColorGreen))
+			fmt.Println(colorize("\nTask updated successfully!", ColorGreen))
 			return
 		}
 	}
-	fmt.Println(colorize("Task not found", ColorRed))
+	fmt.Println(colorize("\nTask not found", ColorRed))
+}
+
+// function to toggle task status
+func toggleTaskCompletion(id int) {
+
+	for i, task := range tasks {
+		if task.ID == id {
+			tasks[i].Done = !tasks[i].Done
+			saveTasks()
+			fmt.Println(colorize("\nTask completion toggled successfully!", ColorGreen))
+			return
+		}
+	}
+
+	fmt.Println(colorize("\nTask not found", ColorRed))
+
 }
 
 // function to save task to file
