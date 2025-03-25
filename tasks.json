@@ -13,10 +13,5 @@
     "id": 3,
     "name": "Sports",
     "done": false
-  },
-  {
-    "id": 4,
-    "name": "Programming",
-    "done": true
   }
 ]

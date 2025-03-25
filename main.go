@@ -51,6 +51,8 @@ func main() {
 		fmt.Println(colorize("2. Add Task", ColorBlue))
 		fmt.Println(colorize("3. Edit Task", ColorBlue))
 		fmt.Println(colorize("4. Toggle Task Completion", ColorBlue))
+		fmt.Println(colorize("5. Delete Task", ColorBlue))
+		fmt.Println(colorize("6. Exit", ColorBlue))
 
 		// user choice input
 		fmt.Print("\nChoose an option: ")
@@ -95,6 +97,25 @@ func main() {
 			}
 
 			toggleTaskCompletion(taskID)
+
+		case "5":
+			fmt.Print("Enter task ID to delete: ")
+
+			taskIDStr, _ := reader.ReadString('\n')
+			taskIDStr = strings.TrimSpace(taskIDStr)
+			taskID, err := strconv.Atoi(taskIDStr)
+
+			if err != nil {
+				fmt.Println(colorize("Invalid task ID.", ColorRed))
+				break
+			}
+
+			deleteTask(taskID)
+
+		case "6":
+			saveTasks()
+			fmt.Println("Exiting...")
+			return
 			
 		default:
 			fmt.Println(colorize("\nInvalid option. Please try again.", ColorRed))
@@ -199,6 +220,21 @@ func toggleTaskCompletion(id int) {
 
 	fmt.Println(colorize("\nTask not found", ColorRed))
 
+}
+
+// function to delete a task
+func deleteTask(id int) {
+
+	for i, task := range tasks {
+		if task.ID == id {
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			saveTasks()
+
+			fmt.Println(colorize("\nTask deleted successfully!", ColorGreen))
+			return
+		}
+	}
+	fmt.Println(colorize("\nTask not found", ColorRed))
 }
 
 // function to save task to file
