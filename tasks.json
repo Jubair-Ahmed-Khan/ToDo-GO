@@ -1,17 +1,17 @@
 [
   {
     "id": 1,
-    "name": "Excercise",
+    "name": "Namaz",
     "done": false
   },
   {
     "id": 2,
-    "name": "Dinner",
-    "done": true
+    "name": "Sleep",
+    "done": false
   },
   {
     "id": 3,
-    "name": "Sports",
+    "name": "Jogging",
     "done": false
   }
 ]
