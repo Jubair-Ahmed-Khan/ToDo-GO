@@ -16,3 +16,7 @@ func NewTask(id int, name string) Task {
 	}
 }
 
+// toggle task completion status
+func (t *Task) ToggleCompletion() {
+	t.Done = !t.Done
+}

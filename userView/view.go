@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/Jubair-Ahmed-Khan/ToDoList/task"
@@ -48,6 +49,10 @@ func (c *CLI) Run() {
 			c.viewTasks()
 		case "2":
 			c.addTask()
+		case "3":
+			c.editTask()
+		case "4":
+			c.toggleTaskCompletion()
 		default:
 			fmt.Println(utils.Colorize("\nInvalid option. Please try again.", utils.ColorRed))
 		}
@@ -60,6 +65,8 @@ func (c *CLI) displayMenu() {
 
 	fmt.Println("\n" + utils.Colorize("1. View Task", utils.ColorBlue))
 	fmt.Println(utils.Colorize("2. Add Task", utils.ColorBlue))
+	fmt.Println(utils.Colorize("3. Edit Task", utils.ColorBlue))
+	fmt.Println(utils.Colorize("4. Toggle Task Completion", utils.ColorBlue))
 }
 
 // function to get user input
@@ -109,6 +116,55 @@ func (c *CLI) viewTasks() {
 	}
 }
 
+// function to edit a task
+func (c *CLI) editTask() {
+
+	taskIDStr := c.getInput("Enter task ID to edit: ")
+	taskID, err := strconv.Atoi(taskIDStr)
+
+	if err != nil {
+		fmt.Println(utils.Colorize("Invalid task ID.", utils.ColorRed))
+		return
+	}
+
+	newName := c.getInput("Enter new task name: ")
+
+	for i, task := range c.tasks {
+		if task.ID == taskID {
+			c.tasks[i].Name = newName
+			c.saveTasks()
+			fmt.Println(utils.Colorize("Task updated successfully!", utils.ColorGreen))
+			return
+		}
+	}
+
+	fmt.Println(utils.Colorize("Task not found", utils.ColorRed))
+}
+
+// function to toggle task completion status
+func (c *CLI) toggleTaskCompletion() {
+
+	taskIDStr := c.getInput("Enter task ID to toggle completion: ")
+	taskID, err := strconv.Atoi(taskIDStr)
+
+	if err != nil {
+		fmt.Println(utils.Colorize("Invalid task ID.", utils.ColorRed))
+		return
+	}
+
+	for i, task := range c.tasks {
+		if task.ID == taskID {
+			c.tasks[i].ToggleCompletion()
+			c.saveTasks()
+			fmt.Println(utils.Colorize("\nTask completion toggled successfully!", utils.ColorGreen))
+			return
+		}
+	}
+	
+	fmt.Println(utils.Colorize("Task not found", utils.ColorRed))
+}
+
+// function to save tasks
 func (c *CLI) saveTasks() {
 	err := task.SaveTasks(c.tasks)
 	if err != nil {

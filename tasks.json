@@ -1,8 +1,8 @@
 [
   {
     "id": 1,
-    "name": "Namaz",
-    "done": false
+    "name": "Coding",
+    "done": true
   },
   {
     "id": 2,
