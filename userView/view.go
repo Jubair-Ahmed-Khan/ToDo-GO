@@ -53,6 +53,11 @@ func (c *CLI) Run() {
 			c.editTask()
 		case "4":
 			c.toggleTaskCompletion()
+		case "5":
+			c.deleteTask()
+		case "6":
+			c.saveAndExit()
+			return
 		default:
 			fmt.Println(utils.Colorize("\nInvalid option. Please try again.", utils.ColorRed))
 		}
@@ -67,6 +72,8 @@ func (c *CLI) displayMenu() {
 	fmt.Println(utils.Colorize("2. Add Task", utils.ColorBlue))
 	fmt.Println(utils.Colorize("3. Edit Task", utils.ColorBlue))
 	fmt.Println(utils.Colorize("4. Toggle Task Completion", utils.ColorBlue))
+	fmt.Println(utils.Colorize("5. Delete Task", utils.ColorBlue))
+	fmt.Println(utils.Colorize("6. Exit", utils.ColorBlue))
 }
 
 // function to get user input
@@ -164,10 +171,39 @@ func (c *CLI) toggleTaskCompletion() {
 	fmt.Println(utils.Colorize("Task not found", utils.ColorRed))
 }
 
+// function to delete a task
+func (c *CLI) deleteTask() {
+
+	taskIDStr := c.getInput("Enter task ID to delete: ")
+	taskID, err := strconv.Atoi(taskIDStr)
+
+	if err != nil {
+		fmt.Println(utils.Colorize("Invalid task ID.", utils.ColorRed))
+		return
+	}
+
+	for i, task := range c.tasks {
+		if task.ID == taskID {
+			c.tasks = append(c.tasks[:i], c.tasks[i+1:]...)
+			c.saveTasks()
+			fmt.Println(utils.Colorize("\nTask deleted successfully!", utils.ColorGreen))
+			return
+		}
+	}
+	fmt.Println(utils.Colorize("Task not found", utils.ColorRed))
+}
+
+
 // function to save tasks
 func (c *CLI) saveTasks() {
 	err := task.SaveTasks(c.tasks)
 	if err != nil {
 		fmt.Println(utils.Colorize("Error saving tasks:", utils.ColorRed), err)
 	}
+}
+
+// function to exit the program
+func (c *CLI) saveAndExit() {
+	c.saveTasks()
+	fmt.Println("Exiting...")
 }
