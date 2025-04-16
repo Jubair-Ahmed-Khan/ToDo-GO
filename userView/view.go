@@ -167,7 +167,7 @@ func (c *CLI) toggleTaskCompletion() {
 			return
 		}
 	}
-	
+
 	fmt.Println(utils.Colorize("Task not found", utils.ColorRed))
 }
 
@@ -193,7 +193,6 @@ func (c *CLI) deleteTask() {
 	fmt.Println(utils.Colorize("Task not found", utils.ColorRed))
 }
 
-
 // function to save tasks
 func (c *CLI) saveTasks() {
 	err := task.SaveTasks(c.tasks)
@@ -205,5 +204,5 @@ func (c *CLI) saveTasks() {
 // function to exit the program
 func (c *CLI) saveAndExit() {
 	c.saveTasks()
-	fmt.Println("Exiting...")
+	fmt.Println(utils.Colorize("\nExiting...\n", utils.ColorRed))
 }

@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-const filename = "tasks.json"
+const filename = "data/tasks.json"
 
 // function to save task to file
 func SaveTasks(tasks []Task) error {
